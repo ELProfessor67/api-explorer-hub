@@ -5,6 +5,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import CreateAgent from "./pages/agent/CreateAgent";
+import GetAgent from "./pages/agent/GetAgent";
+import UpdateAgent from "./pages/agent/UpdateAgent";
+import DeleteAgent from "./pages/agent/DeleteAgent";
+import GetCalls from "./pages/calls/GetCalls";
+import GetCallStats from "./pages/calls/GetCallStats";
+import GetNumbers from "./pages/calls/GetNumbers";
+import DeleteNumbers from "./pages/calls/DeleteNumbers";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +24,14 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/agent/create" element={<CreateAgent />} />
+          <Route path="/agent/get" element={<GetAgent />} />
+          <Route path="/agent/update" element={<UpdateAgent />} />
+          <Route path="/agent/delete" element={<DeleteAgent />} />
+          <Route path="/calls/get" element={<GetCalls />} />
+          <Route path="/calls/stats" element={<GetCallStats />} />
+          <Route path="/calls/numbers" element={<GetNumbers />} />
+          <Route path="/calls/delete-numbers" element={<DeleteNumbers />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
