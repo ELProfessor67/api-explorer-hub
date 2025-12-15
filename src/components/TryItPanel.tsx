@@ -30,15 +30,18 @@ export function TryItPanel({
 }: TryItPanelProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
+  const [hasTriedRequest, setHasTriedRequest] = useState(false);
   const [paramValues, setParamValues] = useState<Record<string, string>>({});
 
   const methodVariant = method.toLowerCase() as "get" | "post" | "put" | "delete";
 
   const handleTryIt = async () => {
     setIsLoading(true);
+    setHasTriedRequest(false);
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setResponse(sampleResponse);
+    setHasTriedRequest(true);
     setIsLoading(false);
   };
 
@@ -124,17 +127,25 @@ export function TryItPanel({
       <div className="p-4">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-sm font-semibold text-foreground">Response</h4>
-          {response && (
-            <Badge variant="outline" className="text-success border-success/30">
+          {hasTriedRequest && response && (
+            <Badge variant="outline" className="text-success border-success/30 animate-fade-in">
               200 OK
             </Badge>
           )}
+          {!hasTriedRequest && (
+            <span className="text-xs text-muted-foreground">Sample response</span>
+          )}
         </div>
-        <CodeBlock
-          code={response || sampleResponse}
-          language="json"
-          className={cn(!response && "opacity-50")}
-        />
+        <div className={cn(
+          "transition-all duration-300",
+          hasTriedRequest && "ring-2 ring-success/30 rounded-lg"
+        )}>
+          <CodeBlock
+            code={response || sampleResponse}
+            language="json"
+            className={cn(!hasTriedRequest && "opacity-50")}
+          />
+        </div>
       </div>
     </div>
   );
