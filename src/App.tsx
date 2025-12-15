@@ -10,6 +10,7 @@ import GetAgent from "./pages/agent/GetAgent";
 import UpdateAgent from "./pages/agent/UpdateAgent";
 import DeleteAgent from "./pages/agent/DeleteAgent";
 import GetCalls from "./pages/calls/GetCalls";
+import MakeCall from "./pages/calls/MakeCall";
 import GetCallStats from "./pages/calls/GetCallStats";
 import GetNumbers from "./pages/calls/GetNumbers";
 import DeleteNumbers from "./pages/calls/DeleteNumbers";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/agent/update" element={<UpdateAgent />} />
           <Route path="/agent/delete" element={<DeleteAgent />} />
           <Route path="/calls/get" element={<GetCalls />} />
+          <Route path="/calls/make" element={<MakeCall />} />
           <Route path="/calls/stats" element={<GetCallStats />} />
           <Route path="/calls/numbers" element={<GetNumbers />} />
           <Route path="/calls/delete-numbers" element={<DeleteNumbers />} />

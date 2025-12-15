@@ -32,15 +32,16 @@ const navigation: NavGroup[] = [
     items: [
       { title: "Create Agent", href: "/agent/create", method: "POST" },
       { title: "Get Agent", href: "/agent/get", method: "GET" },
-      { title: "Update Agent", href: "/agent/update", method: "PUT" },
+      { title: "Update Agent", href: "/agent/update", method: "POST" },
       { title: "Delete Agent", href: "/agent/delete", method: "DELETE" },
     ],
   },
   {
-    title: "Call History",
+    title: "Calls",
     icon: <Phone className="w-4 h-4" />,
     items: [
-      { title: "Get Calls", href: "/calls/get", method: "GET" },
+      { title: "Get Call History", href: "/calls/get", method: "GET" },
+      { title: "Make Outbound Call", href: "/calls/make", method: "POST" },
       { title: "Get Call Stats", href: "/calls/stats", method: "GET" },
       { title: "Get Numbers", href: "/calls/numbers", method: "GET" },
       { title: "Delete Numbers", href: "/calls/delete-numbers", method: "DELETE" },
@@ -57,7 +58,7 @@ const methodColors = {
 
 export function ApiSidebar() {
   const location = useLocation();
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(["Agent", "Call History"]);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(["Agent", "Calls"]);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const toggleGroup = (title: string) => {
