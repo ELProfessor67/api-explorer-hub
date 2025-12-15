@@ -3,41 +3,24 @@ import { TryItPanel } from "@/components/TryItPanel";
 import { CodeBlock } from "@/components/CodeBlock";
 import { Badge } from "@/components/ui/badge";
 
-export default function UpdateAgent() {
+export default function MakeCall() {
   const requestBody = `{
-  "base_prompt": "You are a helpful assistant for a dental clinic.",
-  "welcome_msg": "Hi! Thank you for calling our clinic. How can I help you today?",
-  "voice_speed": 1.1,
-  "voice_engine_name": "elevenlabs",
-  "voice_id": "example-elevenlabs-voice-id",
-  "voice_name": "Call Assistant"
+  "from": "+15559876543",
+  "to": "+15551234567",
+  "context": {
+    "customer_name": "John Doe",
+    "order_id": "12345"
+  }
 }`;
 
   const sampleResponse = `{
   "success": true,
-  "agent": {
-    "_id": "673ffa11b1e3f900129a0010",
-    "user_id": "673ff9e1b1e3f900129a0001",
-    "name": "UrbanChat Assistant",
-    "base_prompt": "You are a helpful assistant for a dental clinic.",
-    "welcome_msg": "Hi! Thank you for calling our clinic. How can I help you today?",
-    "voice_speed": 1.1,
-    "voice_engine_name": "elevenlabs",
-    "voice_id": "example-elevenlabs-voice-id",
-    "voice_name": "Call Assistant",
-    "updated_at": "2025-12-15T12:00:00.000Z"
-  }
+  "call_id": "call-uuid-456",
+  "status": "initiated",
+  "from": "+15559876543",
+  "to": "+15551234567",
+  "agent_id": "673ffa11b1e3f900129a0010"
 }`;
-
-  const parameters = [
-    {
-      name: "agent_id",
-      type: "string",
-      required: true,
-      description: "MongoDB _id of the AiAgent to update",
-      default: "673ffa11b1e3f900129a0010",
-    },
-  ];
 
   return (
     <ApiLayout>
@@ -47,12 +30,12 @@ export default function UpdateAgent() {
           <div className="flex items-center gap-3">
             <Badge variant="post">POST</Badge>
             <code className="text-sm font-mono text-muted-foreground">
-              /update-ai-agent/:agent_id
+              /phone/call
             </code>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Update AI Agent</h1>
+          <h1 className="text-3xl font-bold text-foreground">Make Outbound Call</h1>
           <p className="text-muted-foreground max-w-2xl">
-            Updates fields on an existing AI agent. Only fields sent in the body are changed.
+            Triggers an outbound SIP call using Plivo. The agent is resolved from the 'from' phone number.
           </p>
         </div>
 
@@ -84,38 +67,9 @@ export default function UpdateAgent() {
               </div>
             </section>
 
-            {/* Path Parameters */}
-            <section className="space-y-4">
-              <h2 className="text-xl font-semibold text-foreground">Path Parameters</h2>
-              <div className="overflow-hidden rounded-xl border border-border">
-                <table className="w-full text-sm">
-                  <thead className="bg-secondary/50">
-                    <tr>
-                      <th className="px-4 py-3 text-left font-semibold text-foreground">Parameter</th>
-                      <th className="px-4 py-3 text-left font-semibold text-foreground">Type</th>
-                      <th className="px-4 py-3 text-left font-semibold text-foreground">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    <tr className="bg-card">
-                      <td className="px-4 py-3">
-                        <code className="text-primary">agent_id</code>
-                        <span className="ml-2 text-[10px] text-destructive">required</span>
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground font-mono text-xs">string</td>
-                      <td className="px-4 py-3 text-muted-foreground">MongoDB _id of the AiAgent to update</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
             {/* Request Body */}
             <section className="space-y-4">
               <h2 className="text-xl font-semibold text-foreground">Request Body</h2>
-              <p className="text-sm text-muted-foreground">
-                All fields are optional. Only include fields you want to update.
-              </p>
               <div className="overflow-hidden rounded-xl border border-border">
                 <table className="w-full text-sm">
                   <thead className="bg-secondary/50">
@@ -127,16 +81,16 @@ export default function UpdateAgent() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {[
-                      { field: "base_prompt", type: "string", description: "Updated system instructions" },
-                      { field: "welcome_msg", type: "string", description: "Updated greeting message" },
-                      { field: "voice_speed", type: "number", description: "Updated voice speed multiplier" },
-                      { field: "voice_engine_name", type: "string", description: "Updated voice engine (deepgram, elevenlabs)" },
-                      { field: "voice_id", type: "string", description: "Updated voice identifier" },
-                      { field: "voice_name", type: "string", description: "Updated voice display name" },
+                      { field: "from", type: "string", required: true, description: "Plivo phone number to call from (must be registered)" },
+                      { field: "to", type: "string", required: true, description: "Destination phone number to call" },
+                      { field: "context", type: "object", required: false, description: "Optional context object passed to the agent" },
                     ].map((row) => (
                       <tr key={row.field} className="bg-card">
                         <td className="px-4 py-3">
                           <code className="text-primary">{row.field}</code>
+                          {row.required && (
+                            <span className="ml-2 text-[10px] text-destructive">required</span>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{row.type}</td>
                         <td className="px-4 py-3 text-muted-foreground">{row.description}</td>
@@ -147,25 +101,40 @@ export default function UpdateAgent() {
               </div>
             </section>
 
+            {/* Notes */}
+            <section className="space-y-4">
+              <h2 className="text-xl font-semibold text-foreground">Important Notes</h2>
+              <div className="p-4 rounded-xl bg-secondary/50 border border-border">
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li>• The <code className="text-primary">from</code> number must exist as a Plivo phone record</li>
+                  <li>• The <code className="text-primary">from</code> number must match an AiAgent's plivo_phone_number</li>
+                  <li>• The agent is automatically resolved based on the <code className="text-primary">from</code> number</li>
+                </ul>
+              </div>
+            </section>
+
             {/* Code Example */}
             <section className="space-y-4">
               <h2 className="text-xl font-semibold text-foreground">Example</h2>
               <CodeBlock
-                code={`const response = await fetch('http://localhost:8080/api/update-ai-agent/673ffa11b1e3f900129a0010', {
+                code={`const response = await fetch('http://localhost:8080/api/phone/call', {
   method: 'POST',
   headers: {
     'authorization': '<UC_API_KEY>',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    base_prompt: 'You are a helpful assistant for a dental clinic.',
-    welcome_msg: 'Hi! Thank you for calling our clinic.',
-    voice_speed: 1.1
+    from: '+15559876543',
+    to: '+15551234567',
+    context: {
+      customer_name: 'John Doe',
+      order_id: '12345'
+    }
   })
 });
 
-const { success, agent } = await response.json();
-console.log('Updated:', agent.updated_at);`}
+const { success, call_id, status } = await response.json();
+console.log(\`Call initiated: \${call_id} - Status: \${status}\`);`}
                 title="JavaScript"
               />
             </section>
@@ -175,8 +144,7 @@ console.log('Updated:', agent.updated_at);`}
           <div className="lg:sticky lg:top-8 lg:self-start">
             <TryItPanel
               method="POST"
-              endpoint="/api/update-ai-agent/{agent_id}"
-              parameters={parameters}
+              endpoint="/api/phone/call"
               requestBody={requestBody}
               sampleResponse={sampleResponse}
             />
